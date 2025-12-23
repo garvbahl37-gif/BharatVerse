@@ -4,8 +4,7 @@ import { Search, Route, X, MapPin } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-//images import
-
+/* ===================== IMAGES ===================== */
 import GokarnaBeach from "../assets/mapImages/GokarnaBeach.jpeg";
 import KudremukhNationalPark from "../assets/mapImages/KudremukhNationalPark.jpeg";
 import ChikmagalurCoffeePlantations from "../assets/mapImages/ChikmagalurCoffeePlantations.jpg";
@@ -57,7 +56,7 @@ import Darjeeling from "../assets/mapImages/Darjeeling.jpeg";
 import Sundarbans from "../assets/mapImages/Sundarbans.jpeg";
 import KothapatnamBeach from "../assets/mapImages/KothapatnamBeach.jpg";
 
-// Fix for default markers
+/* ===================== LEAFLET MARKER FIX ===================== */
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -68,7 +67,11 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-const MapPage = ({ onPageChange, user }) => {
+const MapPage = () => {
+  const mapRef = useRef(null);
+
+  const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]);
+
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,10 +80,8 @@ const MapPage = ({ onPageChange, user }) => {
   const [userLocation, setUserLocation] = useState(null);
   const [isRouteMode, setIsRouteMode] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState([]);
-  const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]);
   const [mapView, setMapView] = useState("streets");
   const [liveLocationInRoute, setLiveLocationInRoute] = useState(false);
-  const mapRef = useRef(null);
 
   // Complete Data - 50+ locations (Hidden Gems + Heritage Sites + Temples)
   const allSites = [
@@ -783,7 +784,7 @@ const MapPage = ({ onPageChange, user }) => {
       entryFee: "₹200",
     },
     {
-      id: 43,
+      id: 50,
       title: "Kothapatnam Beach",
       region: "South",
       state: "Andhra Pradesh",
@@ -1113,7 +1114,9 @@ const MapPage = ({ onPageChange, user }) => {
           center={mapCenter}
           zoom={5}
           style={{ height: "100%", width: "100%" }}
-          ref={mapRef}
+          whenCreated={(mapInstance) => {
+            mapRef.current = mapInstance;
+          }}
         >
           <TileLayer
             url={
@@ -1258,14 +1261,20 @@ const MapPage = ({ onPageChange, user }) => {
       {/* Zoom Controls */}
       <div className="absolute bottom-6 right-6 flex flex-col gap-2 bg-white rounded-lg shadow-md border border-gray-200 z-[500]">
         <button
-          onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() + 1)}
+          onClick={() =>
+            mapRef.current &&
+            mapRef.current.setZoom(mapRef.current.getZoom() + 1)
+          }
           className="w-10 h-10 flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 rounded-t-lg"
         >
           +
         </button>
         <div className="border-t border-gray-200" />
         <button
-          onClick={() => mapRef.current?.setZoom(mapRef.current.getZoom() - 1)}
+          onClick={() =>
+            mapRef.current &&
+            mapRef.current.setZoom(mapRef.current.getZoom() - 1)
+          }
           className="w-10 h-10 flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 rounded-b-lg"
         >
           −
