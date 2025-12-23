@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Search, Route, X, MapPin } from "lucide-react";
 
-import L from "leaflet";
-
 /* ===================== IMAGES ===================== */
 import GokarnaBeach from "../assets/mapImages/GokarnaBeach.jpeg";
 import KudremukhNationalPark from "../assets/mapImages/KudremukhNationalPark.jpeg";
@@ -56,10 +54,7 @@ import Darjeeling from "../assets/mapImages/Darjeeling.jpeg";
 import Sundarbans from "../assets/mapImages/Sundarbans.jpeg";
 import KothapatnamBeach from "../assets/mapImages/KothapatnamBeach.jpg";
 
-/* ===================== LEAFLET MARKER FIX ===================== */
-
-
-
+/* ===================== ClientOnly Component ===================== */
 const ClientOnly = ({ children }) => {
   const [mounted, setMounted] = useState(false);
 
@@ -73,17 +68,31 @@ const ClientOnly = ({ children }) => {
 
 const MapPage = () => {
   const mapRef = useRef(null);
+  const leafletRef = useRef(null);
 
+  // STEP 3 — Dynamically load Leaflet (CRITICAL FIX)
   useEffect(() => {
-    delete L.Icon.Default.prototype._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-      iconUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    let active = true;
+
+    import("leaflet").then((L) => {
+      if (!active) return;
+
+      leafletRef.current = L;
+
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+        iconUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+        shadowUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+      });
     });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]);
@@ -102,7 +111,6 @@ const MapPage = () => {
   // Complete Data - 50+ locations (Hidden Gems + Heritage Sites + Temples)
   const allSites = [
     // SOUTH INDIA - Hidden Gems (15)
-
     {
       id: 1,
       title: "Gokarna Beach",
@@ -870,8 +878,11 @@ const MapPage = () => {
     setFilteredSites(filtered);
   }, [searchQuery, selectedRegion, selectedType]);
 
-  // Create custom icon based on type
+  // STEP 4 — Create custom icon (Replace L usages)
   const createCustomIcon = (type, region, isSelected = false) => {
+    const L = leafletRef.current;
+    if (!L) return null;
+
     let color = "#3b82f6";
     let emoji = "📍";
 
@@ -1021,7 +1032,6 @@ const MapPage = () => {
       const url = `https://www.google.com/maps/dir/?api=1&origin=${originLat},${originLng}&destination=${destLat},${destLng}&travelmode=driving`;
       window.open(url, "_blank");
     } else {
-      // Fallback: open directions with only destination; Google will try to use current location
       const url = `https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}&travelmode=driving`;
       window.open(url, "_blank");
     }
@@ -1042,387 +1052,392 @@ const MapPage = () => {
     }
   }, []);
 
+  // STEP 6 — Add a hard render guard
+  if (!leafletRef.current) return null;
+
   return (
     <ClientOnly>
-    <div className="h-screen w-full bg-gray-50 relative flex flex-col">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 p-4 z-[1000]">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">
-                India Heritage & Hidden Gems Map
-              </h1>
-              <p className="text-sm text-gray-600">
-                Explore 49 destinations across 7 regions
-              </p>
-            </div>
-
-            <button
-              onClick={() => setIsRouteMode(!isRouteMode)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-                isRouteMode
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              <Route size={18} />
-              Route Planner
-            </button>
-          </div>
-
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="relative flex-1 min-w-56">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder="Search by place or state..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none w-full"
-              />
-            </div>
-
-            <select
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-            >
-              {regions.map((region) => (
-                <option key={region.id} value={region.id}>
-                  {region.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-            >
-              {types.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={mapView}
-              onChange={(e) => setMapView(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-            >
-              {mapLayers.map((layer) => (
-                <option key={layer.id} value={layer.id}>
-                  {layer.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Map */}
-      <div className="flex-1 relative">
-          <MapContainer
-              center={mapCenter}
-              zoom={5}
-              style={{ height: "100%", width: "100%" }}
-              whenCreated={(mapInstance) => {
-                mapRef.current = mapInstance;
-              }}
-            >
-
-          <TileLayer
-            url={
-              mapLayers.find((layer) => layer.id === mapView)?.url ||
-              mapLayers[0].url
-            }
-            attribution="&copy; OpenStreetMap contributors"
-          />
-
-          {filteredSites.map((site) => (
-            <Marker
-              key={site.id}
-              position={site.coords}
-              icon={createCustomIcon(
-                site.type,
-                site.region,
-                selectedSite?.id === site.id
-              )}
-              eventHandlers={{
-                click: () => setSelectedSite(site),
-              }}
-            >
-              <Popup>
-                <div className="w-80">
-                  <img
-                    src={site.image}
-                    alt={site.title}
-                    className="w-full h-40 object-cover rounded-lg mb-3"
-                  />
-                  <div className="mb-3">
-                    <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 mb-2">
-                      {site.type}
-                    </span>
-                    <h3 className="font-bold text-lg mb-1">{site.title}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{site.state}</p>
-                  </div>
-                  <p className="text-sm text-gray-700 mb-3">
-                    {site.description}
-                  </p>
-
-                  <div className="space-y-2 mb-4 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-yellow-600">⭐ {site.rating}</span>
-                      <span className="text-gray-600">{site.visitors}</span>
-                    </div>
-                    <div className="text-gray-600">
-                      <p>Hours: {site.openHours}</p>
-                      <p>Fee: {site.entryFee}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    {isRouteMode && (
-                      <button
-                        onClick={() => addToRoute(site)}
-                        className="w-full bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                      >
-                        Add to Route
-                      </button>
-                    )}
-
-                    {/* NEW BUTTON: Navigate from live location to this place */}
-                    <button
-                      onClick={() => navigateFromLiveLocation(site)}
-                      className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <MapPin size={16} />
-                      Navigate from My Location
-                    </button>
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-
-          {userLocation && (
-            <Marker
-              position={userLocation}
-              icon={L.divIcon({
-                className: "user-marker",
-                html: `
-                  <div style="
-                    background: #3b82f6;
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 50%;
-                    border: 4px solid white;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                  "></div>
-                `,
-                iconSize: [20, 20],
-                iconAnchor: [10, 10],
-              })}
-            >
-              <Popup>Your Location</Popup>
-            </Marker>
-          )}
-        </MapContainer>
-      </div>
-
-      {/* Legend */}
-      <div className="absolute bottom-6 left-6 bg-white rounded-lg shadow-md border border-gray-200 p-4 z-[500] max-h-80 overflow-y-auto">
-        <h3 className="font-bold text-sm mb-3 text-gray-800">Legend</h3>
-        <div className="space-y-2">
-          <div>
-            <p className="text-xs font-semibold text-gray-700 mb-2">Types:</p>
-            <div className="space-y-1 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">💎</span>
-                <span>Hidden Gems</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🏛️</span>
-                <span>Heritage Sites</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🛕</span>
-                <span>Temples</span>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 pt-2">
-            <p className="text-xs font-semibold text-gray-700 mb-2">Regions:</p>
-            <div className="space-y-1">
-              {regions.slice(1).map((region) => (
-                <div
-                  key={region.id}
-                  className="flex items-center gap-2 text-xs"
-                >
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: region.color }}
-                  />
-                  <span className="text-gray-700">{region.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Zoom Controls */}
-      <div className="absolute bottom-6 right-6 flex flex-col gap-2 bg-white rounded-lg shadow-md border border-gray-200 z-[500]">
-        <button
-          onClick={() =>
-            mapRef.current &&
-            mapRef.current.setZoom(mapRef.current.getZoom() + 1)
-          }
-          className="w-10 h-10 flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 rounded-t-lg"
-        >
-          +
-        </button>
-        <div className="border-t border-gray-200" />
-        <button
-          onClick={() =>
-            mapRef.current &&
-            mapRef.current.setZoom(mapRef.current.getZoom() - 1)
-          }
-          className="w-10 h-10 flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 rounded-b-lg"
-        >
-          −
-        </button>
-      </div>
-
-      {/* Route Panel - UPDATED WITH LIVE LOCATION FEATURE */}
-      {isRouteMode && (
-        <div className="absolute top-20 right-6 bottom-6 w-96 bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col z-[500]">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h2 className="font-bold text-gray-800">Route Planner</h2>
-            <button
-              onClick={() => setIsRouteMode(false)}
-              className="text-gray-500 hover:text-gray-700 p-1"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto p-4">
-            {selectedRoute.length === 0 ? (
-              <div className="text-center py-8 text-gray-600">
-                <Route size={32} className="mx-auto mb-3 text-gray-400" />
-                <p className="text-sm">Add places to create your route</p>
-              </div>
-            ) : (
+      <div className="h-screen w-full bg-gray-50 relative flex flex-col">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b border-gray-200 p-4 z-[1000]">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between gap-4 mb-4">
               <div>
-                <div className="bg-blue-50 p-3 rounded-lg mb-4">
-                  <p className="text-sm font-medium text-blue-900">
-                    {selectedRoute.length} places selected
-                  </p>
-                </div>
+                <h1 className="text-2xl font-bold text-gray-800">
+                  India Heritage & Hidden Gems Map
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Explore 49 destinations across 7 regions
+                </p>
+              </div>
 
-                <div className="space-y-3">
-                  {selectedRoute.map((site, index) => (
-                    <div
-                      key={site.id}
-                      className={`p-3 rounded-lg border ${
-                        site.id === "live-location"
-                          ? "bg-green-50 border-green-300"
-                          : "bg-gray-50 border-gray-200"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span
-                              className={`font-bold text-sm px-2 py-0.5 rounded ${
-                                site.id === "live-location"
-                                  ? "bg-green-100 text-green-600"
-                                  : "bg-blue-100 text-blue-600"
-                              }`}
-                            >
-                              {site.id === "live-location" ? (
-                                <MapPin size={14} className="inline mr-1" />
-                              ) : null}
-                              {index + 1}
-                            </span>
-                            <span
-                              className={`font-medium text-sm ${
-                                site.id === "live-location"
-                                  ? "text-green-700"
-                                  : "text-gray-800"
-                              }`}
-                            >
-                              {site.title}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-600">
-                            {site.state} • {site.type}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() =>
-                            site.id === "live-location"
-                              ? removeLiveLocationFromRoute()
-                              : removeFromRoute(site.id)
-                          }
-                          className="text-red-600 hover:text-red-800 p-1"
-                        >
-                          <X size={16} />
-                        </button>
+              <button
+                onClick={() => setIsRouteMode(!isRouteMode)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                  isRouteMode
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                <Route size={18} />
+                Route Planner
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="relative flex-1 min-w-56">
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by place or state..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none w-full"
+                />
+              </div>
+
+              <select
+                value={selectedRegion}
+                onChange={(e) => setSelectedRegion(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+              >
+                {regions.map((region) => (
+                  <option key={region.id} value={region.id}>
+                    {region.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+              >
+                {types.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={mapView}
+                onChange={(e) => setMapView(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+              >
+                {mapLayers.map((layer) => (
+                  <option key={layer.id} value={layer.id}>
+                    {layer.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Map */}
+        <div className="flex-1 relative">
+          <MapContainer
+            center={mapCenter}
+            zoom={5}
+            style={{ height: "100%", width: "100%" }}
+            whenCreated={(mapInstance) => {
+              mapRef.current = mapInstance;
+            }}
+          >
+            <TileLayer
+              url={
+                mapLayers.find((layer) => layer.id === mapView)?.url ||
+                mapLayers[0].url
+              }
+              attribution="&copy; OpenStreetMap contributors"
+            />
+
+            {filteredSites.map((site) => (
+              <Marker
+                key={site.id}
+                position={site.coords}
+                icon={createCustomIcon(
+                  site.type,
+                  site.region,
+                  selectedSite?.id === site.id
+                )}
+                eventHandlers={{
+                  click: () => setSelectedSite(site),
+                }}
+              >
+                <Popup>
+                  <div className="w-80">
+                    <img
+                      src={site.image}
+                      alt={site.title}
+                      className="w-full h-40 object-cover rounded-lg mb-3"
+                    />
+                    <div className="mb-3">
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 mb-2">
+                        {site.type}
+                      </span>
+                      <h3 className="font-bold text-lg mb-1">{site.title}</h3>
+                      <p className="text-sm text-gray-600 mb-2">{site.state}</p>
+                    </div>
+                    <p className="text-sm text-gray-700 mb-3">
+                      {site.description}
+                    </p>
+
+                    <div className="space-y-2 mb-4 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-yellow-600">⭐ {site.rating}</span>
+                        <span className="text-gray-600">{site.visitors}</span>
+                      </div>
+                      <div className="text-gray-600">
+                        <p>Hours: {site.openHours}</p>
+                        <p>Fee: {site.entryFee}</p>
                       </div>
                     </div>
-                  ))}
+
+                    <div className="space-y-2">
+                      {isRouteMode && (
+                        <button
+                          onClick={() => addToRoute(site)}
+                          className="w-full bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                        >
+                          Add to Route
+                        </button>
+                      )}
+
+                      {/* Navigate from live location button */}
+                      <button
+                        onClick={() => navigateFromLiveLocation(site)}
+                        className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <MapPin size={16} />
+                        Navigate from My Location
+                      </button>
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+
+            {/* STEP 5 — Fix user-location marker with Leaflet ref check */}
+            {userLocation && leafletRef.current && (
+              <Marker
+                position={userLocation}
+                icon={leafletRef.current.divIcon({
+                  className: "user-marker",
+                  html: `
+                    <div style="
+                      background: #3b82f6;
+                      width: 20px;
+                      height: 20px;
+                      border-radius: 50%;
+                      border: 4px solid white;
+                      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    "></div>
+                  `,
+                  iconSize: [20, 20],
+                  iconAnchor: [10, 10],
+                })}
+              >
+                <Popup>Your Location</Popup>
+              </Marker>
+            )}
+          </MapContainer>
+        </div>
+
+        {/* Legend */}
+        <div className="absolute bottom-6 left-6 bg-white rounded-lg shadow-md border border-gray-200 p-4 z-[500] max-h-80 overflow-y-auto">
+          <h3 className="font-bold text-sm mb-3 text-gray-800">Legend</h3>
+          <div className="space-y-2">
+            <div>
+              <p className="text-xs font-semibold text-gray-700 mb-2">Types:</p>
+              <div className="space-y-1 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">💎</span>
+                  <span>Hidden Gems</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🏛️</span>
+                  <span>Heritage Sites</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🛕</span>
+                  <span>Temples</span>
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* Footer - UPDATED WITH LIVE LOCATION BUTTON */}
-          <div className="border-t border-gray-200 p-4 space-y-2">
-            {userLocation && !liveLocationInRoute && (
-              <button
-                onClick={addLiveLocationToRoute}
-                className="w-full px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
-              >
-                <MapPin size={16} />
-                Use My Live Location as Start
-              </button>
-            )}
-
-            {selectedRoute.length > 0 && (
-              <>
-                <button
-                  onClick={() => {
-                    const waypoints = selectedRoute
-                      .map((site) => `${site.coords[0]},${site.coords[1]}`)
-                      .join("/");
-                    const url = `https://www.google.com/maps/dir/${waypoints}`;
-                    window.open(url, "_blank");
-                  }}
-                  className="w-full px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                >
-                  Navigate Route
-                </button>
-                <button
-                  onClick={clearRoute}
-                  className="w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
-                >
-                  Clear All
-                </button>
-              </>
-            )}
+            </div>
+            <div className="border-t border-gray-200 pt-2">
+              <p className="text-xs font-semibold text-gray-700 mb-2">
+                Regions:
+              </p>
+              <div className="space-y-1">
+                {regions.slice(1).map((region) => (
+                  <div
+                    key={region.id}
+                    className="flex items-center gap-2 text-xs"
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: region.color }}
+                    />
+                    <span className="text-gray-700">{region.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Zoom Controls */}
+        <div className="absolute bottom-6 right-6 flex flex-col gap-2 bg-white rounded-lg shadow-md border border-gray-200 z-[500]">
+          <button
+            onClick={() =>
+              mapRef.current &&
+              mapRef.current.setZoom(mapRef.current.getZoom() + 1)
+            }
+            className="w-10 h-10 flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 rounded-t-lg"
+          >
+            +
+          </button>
+          <div className="border-t border-gray-200" />
+          <button
+            onClick={() =>
+              mapRef.current &&
+              mapRef.current.setZoom(mapRef.current.getZoom() - 1)
+            }
+            className="w-10 h-10 flex items-center justify-center font-bold text-gray-700 hover:bg-gray-100 rounded-b-lg"
+          >
+            −
+          </button>
+        </div>
+
+        {/* Route Panel - Updated with live location feature */}
+        {isRouteMode && (
+          <div className="absolute top-20 right-6 bottom-6 w-96 bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col z-[500]">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h2 className="font-bold text-gray-800">Route Planner</h2>
+              <button
+                onClick={() => setIsRouteMode(false)}
+                className="text-gray-500 hover:text-gray-700 p-1"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {selectedRoute.length === 0 ? (
+                <div className="text-center py-8 text-gray-600">
+                  <Route size={32} className="mx-auto mb-3 text-gray-400" />
+                  <p className="text-sm">Add places to create your route</p>
+                </div>
+              ) : (
+                <div>
+                  <div className="bg-blue-50 p-3 rounded-lg mb-4">
+                    <p className="text-sm font-medium text-blue-900">
+                      {selectedRoute.length} places selected
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {selectedRoute.map((site, index) => (
+                      <div
+                        key={site.id}
+                        className={`p-3 rounded-lg border ${
+                          site.id === "live-location"
+                            ? "bg-green-50 border-green-300"
+                            : "bg-gray-50 border-gray-200"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span
+                                className={`font-bold text-sm px-2 py-0.5 rounded ${
+                                  site.id === "live-location"
+                                    ? "bg-green-100 text-green-600"
+                                    : "bg-blue-100 text-blue-600"
+                                }`}
+                              >
+                                {site.id === "live-location" ? (
+                                  <MapPin size={14} className="inline mr-1" />
+                                ) : null}
+                                {index + 1}
+                              </span>
+                              <span
+                                className={`font-medium text-sm ${
+                                  site.id === "live-location"
+                                    ? "text-green-700"
+                                    : "text-gray-800"
+                                }`}
+                              >
+                                {site.title}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600">
+                              {site.state} • {site.type}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() =>
+                              site.id === "live-location"
+                                ? removeLiveLocationFromRoute()
+                                : removeFromRoute(site.id)
+                            }
+                            className="text-red-600 hover:text-red-800 p-1"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-gray-200 p-4 space-y-2">
+              {userLocation && !liveLocationInRoute && (
+                <button
+                  onClick={addLiveLocationToRoute}
+                  className="w-full px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
+                >
+                  <MapPin size={16} />
+                  Use My Live Location as Start
+                </button>
+              )}
+
+              {selectedRoute.length > 0 && (
+                <>
+                  <button
+                    onClick={() => {
+                      const waypoints = selectedRoute
+                        .map((site) => `${site.coords[0]},${site.coords[1]}`)
+                        .join("/");
+                      const url = `https://www.google.com/maps/dir/${waypoints}`;
+                      window.open(url, "_blank");
+                    }}
+                    className="w-full px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                  >
+                    Navigate Route
+                  </button>
+                  <button
+                    onClick={clearRoute}
+                    className="w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                  >
+                    Clear All
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </ClientOnly>
   );
 };
