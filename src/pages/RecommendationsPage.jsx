@@ -221,7 +221,7 @@ export default function RecommendationsPage({ onBack }) {
         >
           <video
             className="w-full h-full object-cover object-center"
-            src="/bg_video.mp4"
+            src="/https://res.cloudinary.com/bharatverse/video/upload/v1766520904/bg_video_slgnkx.mp4"
             autoPlay
             loop
             muted
