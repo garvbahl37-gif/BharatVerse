@@ -57,15 +57,29 @@ import Sundarbans from "../assets/mapImages/Sundarbans.jpeg";
 import KothapatnamBeach from "../assets/mapImages/KothapatnamBeach.jpg";
 
 /* ===================== LEAFLET MARKER FIX ===================== */
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+useEffect(() => {
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+    iconUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  });
+}, []);
+
+
+const ClientOnly = ({ children }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+  return children;
+};
 
 const MapPage = () => {
   const mapRef = useRef(null);
@@ -1027,6 +1041,7 @@ const MapPage = () => {
   }, []);
 
   return (
+    <ClientOnly>
     <div className="h-screen w-full bg-gray-50 relative flex flex-col">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200 p-4 z-[1000]">
@@ -1110,14 +1125,16 @@ const MapPage = () => {
 
       {/* Map */}
       <div className="flex-1 relative">
-        <MapContainer
-          center={mapCenter}
-          zoom={5}
-          style={{ height: "100%", width: "100%" }}
-          whenCreated={(mapInstance) => {
-            mapRef.current = mapInstance;
-          }}
-        >
+        {mapRef && (
+          <MapContainer
+              center={mapCenter}
+              zoom={5}
+              style={{ height: "100%", width: "100%" }}
+              whenCreated={(mapInstance) => {
+                mapRef.current = mapInstance;
+              }}
+            >
+
           <TileLayer
             url={
               mapLayers.find((layer) => layer.id === mapView)?.url ||
@@ -1405,6 +1422,7 @@ const MapPage = () => {
         </div>
       )}
     </div>
+    </ClientOnly>
   );
 };
 
