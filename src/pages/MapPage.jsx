@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Search, Route, X, MapPin } from "lucide-react";
-import "leaflet/dist/leaflet.css";
+
 import L from "leaflet";
 
 /* ===================== IMAGES ===================== */
