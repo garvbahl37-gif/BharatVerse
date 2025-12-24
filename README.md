@@ -73,6 +73,13 @@ BharatVerse is a React-based web app that showcases India’s temples, heritage 
 
 ---
 
-
 ### 1. Clone the repository
+
+
+### 2. Install dependencies
+
+
+### 3. Run the development server
+
+
 
