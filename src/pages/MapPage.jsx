@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Search, Route, X, MapPin } from "lucide-react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-/* ===================== IMAGES ===================== */
+
 import GokarnaBeach from "../assets/mapImages/GokarnaBeach.jpeg";
 import KudremukhNationalPark from "../assets/mapImages/KudremukhNationalPark.jpeg";
 import ChikmagalurCoffeePlantations from "../assets/mapImages/ChikmagalurCoffeePlantations.jpg";
@@ -54,7 +56,7 @@ import Darjeeling from "../assets/mapImages/Darjeeling.jpeg";
 import Sundarbans from "../assets/mapImages/Sundarbans.jpeg";
 import KothapatnamBeach from "../assets/mapImages/KothapatnamBeach.jpg";
 
-/* ===================== ClientOnly Component ===================== */
+
 const ClientOnly = ({ children }) => {
   const [mounted, setMounted] = useState(false);
 
@@ -68,35 +70,21 @@ const ClientOnly = ({ children }) => {
 
 const MapPage = () => {
   const mapRef = useRef(null);
-  const leafletRef = useRef(null);
 
-  // STEP 3 — Dynamically load Leaflet (CRITICAL FIX)
+  /* leaflet default marker fix */
   useEffect(() => {
-    let active = true;
-
-    import("leaflet").then((L) => {
-      if (!active) return;
-
-      leafletRef.current = L;
-
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-        iconUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-        shadowUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-      });
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+      iconUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
     });
-
-    return () => {
-      active = false;
-    };
   }, []);
 
-  const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]);
-
+  const [mapCenter] = useState([20.5937, 78.9629]);
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -111,6 +99,7 @@ const MapPage = () => {
   // Complete Data - 50+ locations (Hidden Gems + Heritage Sites + Temples)
   const allSites = [
     // SOUTH INDIA - Hidden Gems (15)
+
     {
       id: 1,
       title: "Gokarna Beach",
@@ -842,11 +831,7 @@ const MapPage = () => {
   ];
 
   const mapLayers = [
-    {
-      id: "streets",
-      name: "Street",
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    },
+    { id: "streets", name: "Street", url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" },
     {
       id: "satellite",
       name: "Satellite",
@@ -859,18 +844,17 @@ const MapPage = () => {
     },
   ];
 
-  // Filter logic
+ 
   useEffect(() => {
     let filtered = allSites.filter((site) => {
+      const q = searchQuery.toLowerCase();
       const matchesSearch =
-        site.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        site.state.toLowerCase().includes(searchQuery.toLowerCase());
-
+        site.title.toLowerCase().includes(q) ||
+        site.state.toLowerCase().includes(q);
       const matchesRegion =
         selectedRegion === "all" || site.region === selectedRegion;
-
-      const matchesType = selectedType === "all" || site.type === selectedType;
-
+      const matchesType =
+        selectedType === "all" || site.type === selectedType;
       return matchesSearch && matchesRegion && matchesType;
     });
 
@@ -878,11 +862,8 @@ const MapPage = () => {
     setFilteredSites(filtered);
   }, [searchQuery, selectedRegion, selectedType]);
 
-  // STEP 4 — Create custom icon (Replace L usages)
+ 
   const createCustomIcon = (type, region, isSelected = false) => {
-    const L = leafletRef.current;
-    if (!L) return null;
-
     let color = "#3b82f6";
     let emoji = "📍";
 
@@ -914,11 +895,7 @@ const MapPage = () => {
           justify-content: center;
           font-size: 18px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-          ${
-            isSelected
-              ? "transform: scale(1.3); box-shadow: 0 0 20px rgba(0,0,0,0.4);"
-              : ""
-          }
+          ${isSelected ? "transform: scale(1.3); box-shadow: 0 0 20px rgba(0,0,0,0.4);" : ""}
         ">
           ${emoji}
         </div>
@@ -927,6 +904,22 @@ const MapPage = () => {
       iconAnchor: [size / 2, size / 2],
     });
   };
+
+  const userLocationIcon = L.divIcon({
+    className: "user-marker",
+    html: `
+      <div style="
+        background: #3b82f6;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      "></div>
+    `,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  });
 
   // Route functions
   const addToRoute = (site) => {
@@ -980,9 +973,9 @@ const MapPage = () => {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -1032,12 +1025,12 @@ const MapPage = () => {
       const url = `https://www.google.com/maps/dir/?api=1&origin=${originLat},${originLng}&destination=${destLat},${destLng}&travelmode=driving`;
       window.open(url, "_blank");
     } else {
+      // Fallback: open directions with only destination; Google will try to use current location
       const url = `https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}&travelmode=driving`;
       window.open(url, "_blank");
     }
   };
 
-  // Get user location
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -1045,15 +1038,12 @@ const MapPage = () => {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
         },
-        (error) => {
+        () => {
           console.log("Location access denied");
         }
       );
     }
   }, []);
-
-  // STEP 6 — Add a hard render guard
-  if (!leafletRef.current) return null;
 
   return (
     <ClientOnly>
@@ -1073,11 +1063,10 @@ const MapPage = () => {
 
               <button
                 onClick={() => setIsRouteMode(!isRouteMode)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-                  isRouteMode
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${isRouteMode
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
               >
                 <Route size={18} />
                 Route Planner
@@ -1139,6 +1128,7 @@ const MapPage = () => {
         </div>
 
         {/* Map */}
+        {/* Map */}
         <div className="flex-1 relative">
           <MapContainer
             center={mapCenter}
@@ -1165,15 +1155,85 @@ const MapPage = () => {
                   site.region,
                   selectedSite?.id === site.id
                 )}
-                eventHandlers={{
-                  click: () => setSelectedSite(site),
-                }}
+                eventHandlers={{ click: () => setSelectedSite(site) }}
+              >
+                
+                  <Popup>
+                    <div className="w-80">
+                      <img
+                        src={site.image}
+                        alt={site.title}
+                        className="w-full h-40 object-cover rounded-lg mb-3"
+                      />
+                      <div className="mb-3">
+                        <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 mb-2">
+                          {site.type}
+                        </span>
+                        <h3 className="font-bold text-lg mb-1">{site.title}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{site.state}</p>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-3">{site.description}</p>
+
+                      <div className="space-y-2 mb-4 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-yellow-600">⭐ {site.rating}</span>
+                          <span className="text-gray-600">{site.visitors}</span>
+                        </div>
+                        <div className="text-gray-600">
+                          <p>Hours: {site.openHours}</p>
+                          <p>Fee: {site.entryFee}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {isRouteMode && (
+                          <button
+                            onClick={() => addToRoute(site)}
+                            className="w-full bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                          >
+                            Add to Route
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => navigateFromLiveLocation(site)}
+                          className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        >
+                          <MapPin size={16} />
+                          Navigate from My Location
+                        </button>
+                      </div>
+                    </div>
+                  </Popup>
+
+                
+              </Marker>
+            ))}
+
+            {userLocation && (
+              <Marker
+                position={userLocation}
+                icon={L.divIcon({
+                  className: "user-marker",
+                  html: `
+            <div style="
+              background: #3b82f6;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              border: 4px solid white;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            "></div>
+          `,
+                  iconSize: [20, 20],
+                  iconAnchor: [10, 10],
+                })}
               >
                 <Popup>
-                  <div className="w-80">
+                  {/* <div className="w-80">
                     <img
-                      src={site.image}
-                      alt={site.title}
+                      // src={site.image}
+                      // alt={site.title}
                       className="w-full h-40 object-cover rounded-lg mb-3"
                     />
                     <div className="mb-3">
@@ -1208,7 +1268,6 @@ const MapPage = () => {
                         </button>
                       )}
 
-                      {/* Navigate from live location button */}
                       <button
                         onClick={() => navigateFromLiveLocation(site)}
                         className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -1217,32 +1276,9 @@ const MapPage = () => {
                         Navigate from My Location
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </Popup>
-              </Marker>
-            ))}
 
-            {/* STEP 5 — Fix user-location marker with Leaflet ref check */}
-            {userLocation && leafletRef.current && (
-              <Marker
-                position={userLocation}
-                icon={leafletRef.current.divIcon({
-                  className: "user-marker",
-                  html: `
-                    <div style="
-                      background: #3b82f6;
-                      width: 20px;
-                      height: 20px;
-                      border-radius: 50%;
-                      border: 4px solid white;
-                      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                    "></div>
-                  `,
-                  iconSize: [20, 20],
-                  iconAnchor: [10, 10],
-                })}
-              >
-                <Popup>Your Location</Popup>
               </Marker>
             )}
           </MapContainer>
@@ -1270,9 +1306,7 @@ const MapPage = () => {
               </div>
             </div>
             <div className="border-t border-gray-200 pt-2">
-              <p className="text-xs font-semibold text-gray-700 mb-2">
-                Regions:
-              </p>
+              <p className="text-xs font-semibold text-gray-700 mb-2">Regions:</p>
               <div className="space-y-1">
                 {regions.slice(1).map((region) => (
                   <div
@@ -1314,7 +1348,7 @@ const MapPage = () => {
           </button>
         </div>
 
-        {/* Route Panel - Updated with live location feature */}
+        {/* Route Panel - UPDATED WITH LIVE LOCATION FEATURE */}
         {isRouteMode && (
           <div className="absolute top-20 right-6 bottom-6 w-96 bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col z-[500]">
             {/* Header */}
@@ -1347,21 +1381,19 @@ const MapPage = () => {
                     {selectedRoute.map((site, index) => (
                       <div
                         key={site.id}
-                        className={`p-3 rounded-lg border ${
-                          site.id === "live-location"
-                            ? "bg-green-50 border-green-300"
-                            : "bg-gray-50 border-gray-200"
-                        }`}
+                        className={`p-3 rounded-lg border ${site.id === "live-location"
+                          ? "bg-green-50 border-green-300"
+                          : "bg-gray-50 border-gray-200"
+                          }`}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <span
-                                className={`font-bold text-sm px-2 py-0.5 rounded ${
-                                  site.id === "live-location"
-                                    ? "bg-green-100 text-green-600"
-                                    : "bg-blue-100 text-blue-600"
-                                }`}
+                                className={`font-bold text-sm px-2 py-0.5 rounded ${site.id === "live-location"
+                                  ? "bg-green-100 text-green-600"
+                                  : "bg-blue-100 text-blue-600"
+                                  }`}
                               >
                                 {site.id === "live-location" ? (
                                   <MapPin size={14} className="inline mr-1" />
@@ -1369,11 +1401,10 @@ const MapPage = () => {
                                 {index + 1}
                               </span>
                               <span
-                                className={`font-medium text-sm ${
-                                  site.id === "live-location"
-                                    ? "text-green-700"
-                                    : "text-gray-800"
-                                }`}
+                                className={`font-medium text-sm ${site.id === "live-location"
+                                  ? "text-green-700"
+                                  : "text-gray-800"
+                                  }`}
                               >
                                 {site.title}
                               </span>
@@ -1400,7 +1431,7 @@ const MapPage = () => {
               )}
             </div>
 
-            {/* Footer */}
+            {/* Footer - UPDATED WITH LIVE LOCATION BUTTON */}
             <div className="border-t border-gray-200 p-4 space-y-2">
               {userLocation && !liveLocationInRoute && (
                 <button
