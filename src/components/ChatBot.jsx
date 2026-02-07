@@ -189,23 +189,20 @@ If the question is not related to Indian heritage, politely redirect to Indian c
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${
-                message.sender === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"
+                }`}
             >
               <div
-                className={`flex items-start space-x-2 max-w-[80%] ${
-                  message.sender === "user"
+                className={`flex items-start space-x-2 max-w-[80%] ${message.sender === "user"
                     ? "flex-row-reverse space-x-reverse"
                     : "flex-row"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    message.sender === "user"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.sender === "user"
                       ? "bg-saffron-500 text-white"
                       : "bg-gray-300 text-gray-600"
-                  }`}
+                    }`}
                 >
                   {message.sender === "user" ? (
                     <User size={16} />
@@ -246,11 +243,10 @@ If the question is not related to Indian heritage, politely redirect to Indian c
             <button
               onClick={startVoiceInput}
               disabled={isListening || isLoading}
-              className={`p-2 rounded-lg transition-colors ${
-                isListening
+              className={`p-2 rounded-lg transition-colors ${isListening
                   ? "bg-red-100 text-red-600"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <Mic size={20} />
             </button>
@@ -260,7 +256,7 @@ If the question is not related to Indian heritage, politely redirect to Indian c
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask me about Indian heritage, monuments, festivals..."
-              className="flex-1 resize-none px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-saffron-500 focus:border-transparent outline-none max-h-20"
+              className="flex-1 resize-none px-4 py-2 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-saffron-500 focus:border-transparent outline-none max-h-20"
               rows="1"
             />
 

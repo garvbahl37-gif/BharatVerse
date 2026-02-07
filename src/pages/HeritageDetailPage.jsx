@@ -128,7 +128,7 @@ const HeritageDetailPage = ({
         <div className="absolute top-4 left-4 z-20">
           <button
             onClick={() => onPageChange("heritage")}
-            className="p-3 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 transition-colors"
+            className="p-3 bg-white/20 backdrop-blur-sm text-white rounded-2xl hover:bg-white/30 transition-colors"
             aria-label="Back to Heritage List"
           >
             <ArrowLeft size={24} />
@@ -139,7 +139,7 @@ const HeritageDetailPage = ({
         <div className="absolute top-4 right-4 z-20 flex space-x-3">
           <button
             onClick={handleShare}
-            className="p-3 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 transition-colors"
+            className="p-3 bg-white/20 backdrop-blur-sm text-white rounded-2xl hover:bg-white/30 transition-colors"
             aria-label="Share Heritage Site"
           >
             <Share2 size={24} />
@@ -147,11 +147,10 @@ const HeritageDetailPage = ({
 
           <button
             onClick={handleBookmark}
-            className={`p-3 backdrop-blur-sm rounded-xl transition-colors ${
-              isBookmarkedLocal
+            className={`p-3 backdrop-blur-sm rounded-2xl transition-colors ${isBookmarkedLocal
                 ? "bg-yellow-500 text-white"
                 : "bg-white/20 text-white hover:bg-white/30"
-            }`}
+              }`}
             aria-pressed={isBookmarkedLocal}
             aria-label={isBookmarkedLocal ? "Remove bookmark" : "Add bookmark"}
           >
@@ -223,7 +222,7 @@ const HeritageDetailPage = ({
                 </button>
 
                 <button
-                  className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 flex items-center space-x-3"
+                  className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white/30 transition-all duration-300 flex items-center space-x-3"
                   aria-label="View virtual photography"
                 >
                   <Camera size={24} />
@@ -232,7 +231,7 @@ const HeritageDetailPage = ({
 
                 {item.audiobook && (
                   <button
-                    className="bg-gold-500/20 backdrop-blur-sm border-2 border-gold-400/40 text-yellow-200 px-8 py-4 rounded-xl font-semibold hover:bg-gold-500/30 transition-all duration-300 flex items-center space-x-3"
+                    className="bg-gold-500/20 backdrop-blur-sm border-2 border-gold-400/40 text-yellow-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gold-500/30 transition-all duration-300 flex items-center space-x-3"
                     aria-label="Listen to audio story"
                   >
                     <Play size={24} />
@@ -296,11 +295,10 @@ const HeritageDetailPage = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-6 py-4 font-semibold whitespace-nowrap transition-colors ${
-                  activeTab === tab.id
+                className={`flex items-center space-x-2 px-6 py-4 font-semibold whitespace-nowrap transition-colors ${activeTab === tab.id
                     ? "text-saffron-600 border-b-2 border-saffron-600"
                     : "text-gray-600 hover:text-saffron-600"
-                }`}
+                  }`}
                 aria-current={activeTab === tab.id ? "page" : undefined}
               >
                 <tab.icon size={18} aria-hidden="true" />

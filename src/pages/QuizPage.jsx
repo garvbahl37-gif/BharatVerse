@@ -600,7 +600,7 @@ const QuizPage = ({ onPageChange, isSignedIn }) => {
                           </span>
                         </div>
                       </div>
-                      <button className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg group-hover:scale-105 transition-transform duration-300 flex items-center justify-center space-x-2">
+                      <button className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-2xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center space-x-2">
                         <span>Start Quiz</span>
                         <ChevronRight
                           size={18}
@@ -635,32 +635,28 @@ const QuizPage = ({ onPageChange, isSignedIn }) => {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`bg-white rounded-xl text-center p-6 group transition-all duration-300 ${
-                      achievement.unlocked
+                    className={`bg-white rounded-xl text-center p-6 group transition-all duration-300 ${achievement.unlocked
                         ? "bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 hover:shadow-lg"
                         : "bg-gray-50 opacity-60 hover:opacity-80"
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`mb-3 ${
-                        achievement.unlocked ? "animate-bounce" : ""
-                      }`}
+                      className={`mb-3 ${achievement.unlocked ? "animate-bounce" : ""
+                        }`}
                     >
                       <IconComponent
                         size={36}
-                        className={`mx-auto ${
-                          achievement.unlocked
+                        className={`mx-auto ${achievement.unlocked
                             ? achievement.color
                             : "text-gray-400"
-                        } group-hover:scale-110 transition-transform`}
+                          } group-hover:scale-110 transition-transform`}
                       />
                     </div>
                     <h3
-                      className={`font-bold text-sm mb-2 ${
-                        achievement.unlocked
+                      className={`font-bold text-sm mb-2 ${achievement.unlocked
                           ? "text-yellow-800"
                           : "text-gray-500"
-                      }`}
+                        }`}
                     >
                       {achievement.name}
                     </h3>
@@ -685,7 +681,7 @@ const QuizPage = ({ onPageChange, isSignedIn }) => {
           <div className="text-center mb-16">
             <button
               onClick={() => setShowLeaderboard(!showLeaderboard)}
-              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg flex items-center space-x-2 mx-auto text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-2xl flex items-center space-x-2 mx-auto text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
             >
               <Trophy size={24} className="animate-pulse" />
               <span>{showLeaderboard ? "Hide" : "Show"} Leaderboard</span>
@@ -724,23 +720,21 @@ const QuizPage = ({ onPageChange, isSignedIn }) => {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className={`flex items-center justify-between p-6 rounded-xl transition-all duration-300 hover:scale-102 ${
-                              player.isCurrentUser
+                            className={`flex items-center justify-between p-6 rounded-xl transition-all duration-300 hover:scale-102 ${player.isCurrentUser
                                 ? "bg-gradient-to-r from-blue-100 to-indigo-100 border-2 border-blue-300 shadow-md"
                                 : "bg-gray-50 hover:bg-gray-100"
-                            }`}
+                              }`}
                           >
                             <div className="flex items-center space-x-4">
                               <div
-                                className={`text-2xl font-bold w-8 text-center ${
-                                  index === 0
+                                className={`text-2xl font-bold w-8 text-center ${index === 0
                                     ? "text-yellow-500"
                                     : index === 1
-                                    ? "text-gray-400"
-                                    : index === 2
-                                    ? "text-amber-600"
-                                    : "text-gray-600"
-                                }`}
+                                      ? "text-gray-400"
+                                      : index === 2
+                                        ? "text-amber-600"
+                                        : "text-gray-600"
+                                  }`}
                               >
                                 #{player.rank}
                               </div>
@@ -749,11 +743,10 @@ const QuizPage = ({ onPageChange, isSignedIn }) => {
                               </div>
                               <div>
                                 <div
-                                  className={`font-semibold text-lg ${
-                                    player.isCurrentUser
+                                  className={`font-semibold text-lg ${player.isCurrentUser
                                       ? "text-blue-800"
                                       : "text-gray-900"
-                                  }`}
+                                    }`}
                                 >
                                   {player.name}
                                 </div>

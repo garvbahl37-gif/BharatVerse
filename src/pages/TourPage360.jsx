@@ -270,11 +270,10 @@ const TourPage360 = ({ onPageChange }) => {
                   <button
                     key={location.id}
                     onClick={() => setActiveLocation(index)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium transition-all duration-300 whitespace-nowrap ${
-                      activeLocation === index
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium transition-all duration-300 whitespace-nowrap ${activeLocation === index
                         ? `bg-gradient-to-r ${location.color} text-white shadow-lg scale-105`
                         : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                    }`}
+                      }`}
                   >
                     <IconComponent size={16} />
                     <span className="text-sm">{location.name}</span>
@@ -459,7 +458,7 @@ const TourPage360 = ({ onPageChange }) => {
           <button
             onClick={() => setActiveLocation(Math.max(0, activeLocation - 1))}
             disabled={activeLocation === 0}
-            className="px-6 py-3 bg-gray-200 text-gray-600 rounded-xl hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            className="px-6 py-3 bg-gray-200 text-gray-600 rounded-2xl hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
             Previous Destination
           </button>
@@ -471,7 +470,7 @@ const TourPage360 = ({ onPageChange }) => {
               )
             }
             disabled={activeLocation === locations.length - 1}
-            className="px-6 py-3 bg-gradient-to-r from-saffron-500 to-heritage-red-500 text-white rounded-xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            className="px-6 py-3 bg-gradient-to-r from-saffron-500 to-heritage-red-500 text-white rounded-2xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
             Next Destination
           </button>
@@ -492,7 +491,7 @@ const TourPage360 = ({ onPageChange }) => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button
               onClick={() => onPageChange("heritage")}
-              className="bg-gradient-to-r from-saffron-500 to-heritage-red-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 transition-all duration-300 flex items-center space-x-3 justify-center"
+              className="bg-gradient-to-r from-saffron-500 to-heritage-red-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:scale-105 transition-all duration-300 flex items-center space-x-3 justify-center"
             >
               <Building size={24} />
               <span>Explore Heritage Sites</span>
@@ -500,7 +499,7 @@ const TourPage360 = ({ onPageChange }) => {
 
             <button
               onClick={() => onPageChange("quiz")}
-              className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/30 transition-all duration-300 flex items-center space-x-3 justify-center"
+              className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white/30 transition-all duration-300 flex items-center space-x-3 justify-center"
             >
               <Award size={24} />
               <span>Test Your Knowledge</span>

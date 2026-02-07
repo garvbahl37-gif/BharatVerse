@@ -57,6 +57,7 @@ export default {
         heritage: ["Cinzel", "serif"],
         body: ["Inter", "sans-serif"],
         hindi: ["Noto Sans Devanagari", "sans-serif"],
+        anton: ["Anton", "sans-serif"],
       },
       backgroundImage: {
         "heritage-gradient":

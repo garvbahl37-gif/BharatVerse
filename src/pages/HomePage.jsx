@@ -262,7 +262,7 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
   return (
     <div className="min-h-screen">
       {/* Hero Section with background */}
-      <section className="relative h-screen overflow-hidden flex items-center justify-center">
+      <section className="relative h-[80vh] overflow-hidden flex items-center justify-center">
         {/* Video Background */}
         <video
           autoPlay
@@ -301,14 +301,14 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
 
               <button
                 onClick={() => onPageChange("chat")}
-                className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 flex items-center space-x-3 w-full sm:w-auto justify-center"
+                className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white/30 transition-all duration-300 flex items-center space-x-3 w-full sm:w-auto justify-center"
               >
                 Ask Heritage AI Guide
               </button>
 
               <button
                 onClick={() => onPageChange("quiz")}
-                className="bg-gold-500/20 backdrop-blur-sm border-2 border-gold-400/40 text-yellow-200 px-8 py-4 rounded-xl font-semibold hover:bg-gold-500/30 transition-all duration-300 flex items-center space-x-3 w-full sm:w-auto justify-center"
+                className="bg-gold-500/20 backdrop-blur-sm border-2 border-gold-400/40 text-yellow-200 px-8 py-4 rounded-2xl font-semibold hover:bg-gold-500/30 transition-all duration-300 flex items-center space-x-3 w-full sm:w-auto justify-center"
               >
                 Test Your Knowledge
               </button>
@@ -371,7 +371,6 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-heritage font-bold heritage-text-gradient mb-6 flex items-center justify-center">
-              <RotateCcw className="mr-4 text-saffron-600" size={48} />
               Experience Taj Mahal in Real 360°
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
@@ -380,7 +379,7 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
             </p>
           </div>
 
-          <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg mx-auto max-w-7xl">
+          <div className="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden shadow-lg mx-auto max-w-7xl">
             <iframe
               src="https://www.airpano.com/embed.php?3D=taj-mahal-india-2"
               title="360° Taj Mahal by AirPano"
@@ -398,7 +397,7 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
         <div className="flex justify-center my-12">
           <button
             onClick={() => onPageChange("360tour")}
-            className="btn-heritage px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 inline-flex items-center"
+            className="btn-heritage px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300 inline-flex items-center"
           >
             <span>View More 360° Tours</span>
             <ArrowRight className="ml-2" size={20} />
@@ -557,7 +556,6 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-heritage font-bold heritage-text-gradient mb-6 flex items-center justify-center">
-              <TrendingUp className="mr-4 text-saffron-600" size={48} />
               Trending Discoveries
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -571,7 +569,7 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
               return (
                 <div
                   key={index}
-                  className="heritage-card text-center p-6 cursor-pointer hover:shadow-xl transition-all duration-300 group"
+                  className="heritage-card text-center py-10 px-6 rounded-2xl cursor-pointer hover:shadow-xl transition-all duration-300 group"
                   onClick={() => handleSearch(topic.name)}
                   role="button"
                   tabIndex={0}
@@ -704,7 +702,7 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
               return (
                 <div
                   key={index}
-                  className="heritage-card text-center p-8 group hover:shadow-2xl transition-all duration-500"
+                  className="heritage-card text-center py-10 px-6 group hover:shadow-2xl transition-all duration-500"
                 >
                   <div className="mb-6 group-hover:scale-110 transition-transform duration-300">
                     <IconComponent
@@ -725,7 +723,7 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
                     {feature.features.map((item, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-center space-x-2"
+                        className="flex items-center space-x-2"
                       >
                         <Sparkles size={14} className="text-saffron-500" />
                         <span className="text-sm text-gray-700 font-medium">
@@ -742,7 +740,7 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
       </section>
 
       {/* Call to Action */}
-      <section className="relative py-20 text-white overflow-hidden z-10">
+      <section className="relative h-[550px] flex items-center justify-center text-white overflow-hidden z-10">
         {/* Background image and overlay */}
         <div className="absolute inset-0 -z-10 w-full h-full">
           <img
@@ -780,14 +778,14 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-8">
             <button
               onClick={() => onPageChange("states")}
-              className="bg-white text-heritage-red-600 px-10 py-5 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all duration-300 flex items-center space-x-3 shadow-xl"
+              className="bg-white text-heritage-red-600 px-10 py-5 rounded-2xl font-semibold text-lg hover:bg-gray-100 transition-all duration-300 flex items-center space-x-3 shadow-xl"
             >
               <MapPin size={24} />
               <span>Explore by States</span>
             </button>
             <button
               onClick={() => onPageChange("festivals")}
-              className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:bg-white/30 transition-all duration-300 flex items-center space-x-3"
+              className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-10 py-5 rounded-2xl font-semibold text-lg hover:bg-white/30 transition-all duration-300 flex items-center space-x-3"
             >
               <Calendar size={24} />
               <span>Discover Festivals</span>
@@ -806,13 +804,13 @@ const HomePage = ({ onPageChange, user, bookmarks, addBookmark }) => {
       </section>
       {/* Newsletter Signup */}
       {!user && (
-        <section className="py-16 bg-gray-50">
+        <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto text-center">
-              <h3 className="text-2xl font-heritage font-bold text-gray-900 mb-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h3 className="text-4xl md:text-5xl font-heritage font-bold text-gray-900 mb-6">
                 Stay Updated on Indian Heritage
               </h3>
-              <p className="text-gray-600 mb-8">
+              <p className="text-xl text-gray-600 mb-10">
                 Get weekly updates on new heritage sites, festivals, and
                 cultural discoveries
               </p>

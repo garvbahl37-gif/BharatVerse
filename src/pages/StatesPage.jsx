@@ -359,7 +359,7 @@ const StatesPage = ({ onPageChange }) => {
                   placeholder="Search states, capitals, languages..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 outline-none transition-all duration-200 text-lg"
+                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 outline-none transition-all duration-200 text-lg"
                 />
               </div>
 
@@ -367,7 +367,7 @@ const StatesPage = ({ onPageChange }) => {
               <select
                 value={selectedRegion}
                 onChange={(e) => setSelectedRegion(e.target.value)}
-                className="px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 outline-none bg-white text-lg min-w-[200px]"
+                className="px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 outline-none bg-white text-lg min-w-[200px]"
               >
                 {regions.map((region) => (
                   <option key={region.id} value={region.id}>
@@ -380,7 +380,7 @@ const StatesPage = ({ onPageChange }) => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 outline-none bg-white text-lg min-w-[200px]"
+                className="px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 outline-none bg-white text-lg min-w-[200px]"
               >
                 <option value="name">Sort by Name</option>
                 <option value="heritage_count">Sort by Heritage Sites</option>
@@ -390,24 +390,22 @@ const StatesPage = ({ onPageChange }) => {
               </select>
 
               {/* View Mode */}
-              <div className="flex items-center space-x-2 bg-gray-100 rounded-xl p-2">
+              <div className="flex items-center space-x-2 bg-gray-100 rounded-2xl p-2">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-3 rounded-lg transition-all duration-200 ${
-                    viewMode === "grid"
+                  className={`p-3 rounded-lg transition-all duration-200 ${viewMode === "grid"
                       ? "bg-white shadow-md text-saffron-600"
                       : "hover:bg-gray-200 text-gray-600"
-                  }`}
+                    }`}
                 >
                   <Grid size={20} />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-3 rounded-lg transition-all duration-200 ${
-                    viewMode === "list"
+                  className={`p-3 rounded-lg transition-all duration-200 ${viewMode === "list"
                       ? "bg-white shadow-md text-saffron-600"
                       : "hover:bg-gray-200 text-gray-600"
-                  }`}
+                    }`}
                 >
                   <List size={20} />
                 </button>
@@ -735,7 +733,7 @@ const StatesPage = ({ onPageChange }) => {
                 setSearchTerm("");
                 setSelectedRegion("all");
               }}
-              className="mt-6 px-6 py-3 bg-saffron-600 text-white rounded-xl hover:bg-saffron-700 transition-colors"
+              className="mt-6 px-6 py-3 bg-saffron-600 text-white rounded-2xl hover:bg-saffron-700 transition-colors"
             >
               Clear Filters
             </button>
