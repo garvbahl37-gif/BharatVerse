@@ -49,9 +49,9 @@ const Header = ({ currentPage, onPageChange, searchQuery, onSearchChange }) => {
               className="flex items-center space-x-2 group focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 rounded-xl"
               aria-label="Bharatverse Home"
             >
-              <Crown className="w-6 h-6 text-amber-700 group-hover:text-amber-800 transition-colors duration-300" />
+
               <div className="flex flex-col items-start">
-                <h1 className="text-2xl font-anton font-bold bg-gradient-to-r from-amber-700 via-orange-600 to-red-600 bg-clip-text text-transparent tracking-wide group-hover:from-amber-800 group-hover:via-orange-700 group-hover:to-red-700 transition-all duration-300 uppercase">
+                <h1 className="text-2xl font-anton font-bold text-orange-600 tracking-widest transition-colors duration-300 uppercase">
                   BharatVerse
                 </h1>
                 <p className="text-xs text-amber-700 font-semibold tracking-wide -mt-1 opacity-90">

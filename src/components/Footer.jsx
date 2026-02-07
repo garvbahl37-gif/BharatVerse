@@ -65,7 +65,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Social & branding */}
           <div>
-            <h1 className="text-4xl font-anton font-bold mb-4 uppercase">BharatVerse</h1>
+            <h1 className="text-4xl font-anton font-bold mb-4 uppercase tracking-widest text-orange-600">BharatVerse</h1>
             <p className="text-white/85 mb-6">
               Discover India's incredible cultural heritage through immersive
               experiences and interactive storytelling.
