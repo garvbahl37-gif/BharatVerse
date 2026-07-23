@@ -24,7 +24,7 @@ I led the design and implementation of BharatVerse’s **intelligence layer**, f
 
 ---
 
-## 🧠 Salahkar – Intelligent Recommendation System
+## Salahkar – Intelligent Recommendation System
 
 **Salahkar** is a domain-aware recommendation engine built to personalize cultural discovery.
 
@@ -75,16 +75,16 @@ To make cultural knowledge **inclusive and immersive**, I built an AI-powered st
 
 ---
 
-## 🗺️ Platform Features (User-Facing)
+##Platform Features (User-Facing)
 
 ### Interactive Cultural Map
 
 * React + Leaflet with multiple base layers
 * Custom visual markers:
 
-  * 💎 Hidden Gems
-  * 🏛️ Heritage Sites
-  * 🛕 Temples
+  * Hidden Gems
+  * Heritage Sites
+  * Temples
 
 ### Smart Discovery
 
@@ -106,7 +106,7 @@ To make cultural knowledge **inclusive and immersive**, I built an AI-powered st
 
 ---
 
-## 🧱 System Architecture Overview
+## System Architecture Overview
 
 ```
 Frontend (React + Leaflet)
@@ -155,7 +155,7 @@ Designed for:
 
 ---
 
-## 🚀 Local Setup
+##  Local Setup
 
 ```bash
 git clone https://github.com/your-username/BharatVerse.git
@@ -166,7 +166,7 @@ npm run dev
 
 ---
 
-## 🏆 Why This Project Stands Out
+## Why This Project Stands Out
 
 * Demonstrates **end-to-end AI system design**
 * Real-world application of **LLMs beyond chatbots**
@@ -180,7 +180,7 @@ npm run dev
 
 ---
 
-## 📌 Future Enhancements
+## Future Enhancements
 
 * Embedding-based semantic recommendations
 * User feedback loops for ML retraining
